@@ -517,6 +517,12 @@ public class CardStackView extends FrameLayout {
         return containers.getLast();
     }
 
+    public void setVisibleCardViewAlpha(final float alpha) {
+        for (int i = 1; i < containers.size(); i++ ) {
+            containers.get(i).getContentContainer().setAlpha(alpha);
+        }
+    }
+
     public int getTopIndex() {
         return state.topIndex;
     }
