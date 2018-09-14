@@ -3,6 +3,8 @@ package com.yuyakaido.android.cardstackview;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.animation.TimeInterpolator;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -527,4 +529,48 @@ public class CardStackView extends FrameLayout {
         return state.topIndex;
     }
 
+    private void swipe(final SwipeDirection direction) {
+        final CardContainerView target = getTopView();
+        final ViewGroup targetOverlay = getTopView().getOverlayContainer();
+
+        final Float rotationValue;
+        final Float translateXValue;
+
+        if (direction == SwipeDirection.Right) {
+            rotationValue = 10f;
+            translateXValue = 2000f;
+        } else {
+            rotationValue = -10f;
+            translateXValue = -2000f;
+        }
+
+        final ObjectAnimator rotation = ObjectAnimator.ofPropertyValuesHolder(
+                target, PropertyValuesHolder.ofFloat("rotation", rotationValue));
+        rotation.setDuration(200);
+        final ObjectAnimator translateX = ObjectAnimator.ofPropertyValuesHolder(
+                target, PropertyValuesHolder.ofFloat("translationX", 0f, translateXValue));
+        final ObjectAnimator translateY = ObjectAnimator.ofPropertyValuesHolder(
+                target, PropertyValuesHolder.ofFloat("translationY", 0f, 500f));
+        translateX.setStartDelay(100);
+        translateY.setStartDelay(100);
+        translateX.setDuration(500);
+        translateY.setDuration(500);
+        final AnimatorSet cardAnimationSet = new AnimatorSet();
+        cardAnimationSet.playTogether(rotation, translateX, translateY);
+
+        final ObjectAnimator overlayAnimator = ObjectAnimator.ofFloat(targetOverlay, "alpha", 0f, 1f);
+        overlayAnimator.setDuration(200);
+        final AnimatorSet overlayAnimationSet = new AnimatorSet();
+        overlayAnimationSet.playTogether(overlayAnimator);
+
+        swipe(direction, cardAnimationSet, overlayAnimationSet);
+    }
+
+    public void swipeLeft() {
+        swipe(SwipeDirection.Left);
+    }
+
+    public void swipeRight() {
+        swipe(SwipeDirection.Right);
+    }
 }
