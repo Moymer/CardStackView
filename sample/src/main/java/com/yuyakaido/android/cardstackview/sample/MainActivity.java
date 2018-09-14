@@ -59,10 +59,10 @@ public class MainActivity extends AppCompatActivity {
                 removeLast();
                 break;
             case R.id.menu_activity_main_swipe_left:
-                swipeLeft();
+               cardStackView.swipeLeft();
                 break;
             case R.id.menu_activity_main_swipe_right:
-                swipeRight();
+                cardStackView.swipeRight();
                 break;
             case R.id.menu_activity_main_reverse:
                 reverse();
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 cardStackView.setAdapter(adapter);
                 cardStackView.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
-                cardStackView.setVisibleCardViewAlpha(adapter);
+                cardStackView.setVisibleCardViewAlpha(0);
             }
         }, 1000);
     }
@@ -200,68 +200,6 @@ public class MainActivity extends AppCompatActivity {
         cardStackView.setPaginationReserved();
         adapter.addAll(createTouristSpots());
         adapter.notifyDataSetChanged();
-    }
-
-    public void swipeLeft() {
-        List<TouristSpot> spots = extractRemainingTouristSpots();
-        if (spots.isEmpty()) {
-            return;
-        }
-
-        View target = cardStackView.getTopView();
-        View targetOverlay = cardStackView.getTopView().getOverlayContainer();
-
-        ValueAnimator rotation = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat("rotation", -10f));
-        rotation.setDuration(200);
-        ValueAnimator translateX = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat("translationX", 0f, -2000f));
-        ValueAnimator translateY = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat("translationY", 0f, 500f));
-        translateX.setStartDelay(100);
-        translateY.setStartDelay(100);
-        translateX.setDuration(500);
-        translateY.setDuration(500);
-        AnimatorSet cardAnimationSet = new AnimatorSet();
-        cardAnimationSet.playTogether(rotation, translateX, translateY);
-
-        ObjectAnimator overlayAnimator = ObjectAnimator.ofFloat(targetOverlay, "alpha", 0f, 1f);
-        overlayAnimator.setDuration(200);
-        AnimatorSet overlayAnimationSet = new AnimatorSet();
-        overlayAnimationSet.playTogether(overlayAnimator);
-
-        cardStackView.swipe(SwipeDirection.Left, cardAnimationSet, overlayAnimationSet);
-    }
-
-    public void swipeRight() {
-        List<TouristSpot> spots = extractRemainingTouristSpots();
-        if (spots.isEmpty()) {
-            return;
-        }
-
-        View target = cardStackView.getTopView();
-        View targetOverlay = cardStackView.getTopView().getOverlayContainer();
-
-        ValueAnimator rotation = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat("rotation", 10f));
-        rotation.setDuration(200);
-        ValueAnimator translateX = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat("translationX", 0f, 2000f));
-        ValueAnimator translateY = ObjectAnimator.ofPropertyValuesHolder(
-                target, PropertyValuesHolder.ofFloat("translationY", 0f, 500f));
-        translateX.setStartDelay(100);
-        translateY.setStartDelay(100);
-        translateX.setDuration(500);
-        translateY.setDuration(500);
-        AnimatorSet cardAnimationSet = new AnimatorSet();
-        cardAnimationSet.playTogether(rotation, translateX, translateY);
-
-        ObjectAnimator overlayAnimator = ObjectAnimator.ofFloat(targetOverlay, "alpha", 0f, 1f);
-        overlayAnimator.setDuration(200);
-        AnimatorSet overlayAnimationSet = new AnimatorSet();
-        overlayAnimationSet.playTogether(overlayAnimator);
-
-        cardStackView.swipe(SwipeDirection.Right, cardAnimationSet, overlayAnimationSet);
     }
 
     private void reverse() {
